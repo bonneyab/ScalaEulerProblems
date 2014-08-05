@@ -147,20 +147,11 @@ object Problem7{
   def getPrimeNumber(number: Int) : Int = {
     @tailrec def tc(n: Int, counter: Int, current: Int) : Int = {
       if(n < 0) return current
-      else if(isPrime(counter)) tc(n - 1, counter + 1, counter)
+      else if(PrimeHelper.isPrime(counter)) tc(n - 1, counter + 1, counter)
       else tc(n, counter + 1, current)
     }
 
     tc(number, 1, 0)
-  }
-
-  def isPrime(number: Int) : Boolean = {
-    @tailrec def tc(n: Int, counter: Int) : Boolean = {
-      if(counter >= n) return true
-      if(n % counter == 0) return false;
-      tc(n, counter + 1)
-    }
-    tc(number, 2)
   }
 }
 
@@ -226,27 +217,7 @@ object Problem9 {
 //Find the sum of all the primes below two million.
 object Problem10{
     def getSumOfPrimeNumbersBelowNUmber(number: Int) : Double = {
-      val test = getPrimeNumbersBelowNumber(number)
-      (0.0 /: getPrimeNumbersBelowNumber(number)) { _ + _ }
-    }
-
-    def getPrimeNumbersBelowNumber(number: Int) : Iterable[Int] = {
-      var numbers = (2 to number).map { n => (n, true) } toMap
-
-      (2 to math.ceil(math.pow(number, .5)).toInt + 1).foreach { n =>
-        if(numbers(n)) {
-          @tailrec def tc(current: Int, counter: Int, map: Map[Int, Boolean] ) : Map[Int, Boolean] = {
-            if(current > number){
-              return map
-            }
-
-            tc(math.pow(n, 2).toInt + n * counter, counter + 1, map.updated(current, false))
-          }
-          numbers = tc(math.pow(n, 2).toInt , 1, numbers)
-        }
-      }
-
-      numbers.filter(_._2).map{ case (k, v) => k }
+      (0.0 /: PrimeHelper.getPrimeNumbersBelowNumber(number)) { _ + _ }
     }
 }
 
@@ -526,5 +497,59 @@ object Problem25 {
 
   def getDigitsFromNumber(number: BigInt) : Int = {
     return number.toString.length
+  }
+}
+
+
+// Euler discovered the remarkable quadratic formula:
+// n² + n + 41
+// It turns out that the formula will produce 40 primes for the consecutive values n = 0 to 39. However, when n = 40, 402 + 40 + 41 = 40(40 + 1) + 41 is divisible by 41, and certainly when n = 41, 41² + 41 + 41 is clearly divisible by 41.
+// The incredible formula  n² − 79n + 1601 was discovered, which produces 80 primes for the consecutive values n = 0 to 79. The product of the coefficients, −79 and 1601, is −126479.
+// Considering quadratics of the form:
+// n² + an + b, where |a| < 1000 and |b| < 1000
+// where |n| is the modulus/absolute value of n
+// e.g. |11| = 11 and |−4| = 4
+// Find the product of the coefficients, a and b, for the quadratic expression that produces the maximum number of primes for consecutive values of n, starting with n = 0.
+object Problem27 {
+  val primes = PrimeHelper.getPrimeNumbersBelowNumber(100000)
+
+  def GetCoefficientsForQuadraticExpression(max: Int) : Int = {
+    @tailrec def doStuff(a: Int, b:Int, totalPrimes:Int, coefficientProduct:Int) : Int = {
+      val primeCount = GetPrimeCount(a, b)
+      def next(count: Int) : Int = count
+      //This is sort of sucky....
+      if(primeCount > totalPrimes){
+        primeCount match {
+          case x if b > max => {println(s"Returning a: $a, b: $b total: $totalPrimes"); return a * b}
+          case x if a < max => doStuff(a + 1, b, x, a * b)
+          case x => doStuff(-max, b + 1, x, a * b)
+        }
+      }
+      else{
+        totalPrimes match {
+          case x if b > max => {println(s"Returning a: $a, b: $b total: $totalPrimes");return coefficientProduct}
+          case x if a < max => doStuff(a + 1, b, x, coefficientProduct)
+          case x => doStuff(-max, b + 1, x, coefficientProduct)
+        }
+      }
+    }
+
+    doStuff(-max, -max, 0, 0)
+  }
+
+
+  def GetPrimeCount(a: Int, b: Int) : Int = {
+    @tailrec def countPrimes(number: Int, count: Int) : Int = {
+      val result = math.pow(number, 2) + a*number + b
+      //val isPrime = PrimeHelper.isPrime(result.toInt)
+      if(!primes.contains(result)){
+        return count
+      }
+      else{
+        countPrimes(number + 1, count + 1)
+      }
+    }
+
+    countPrimes(0, 0)
   }
 }

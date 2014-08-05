@@ -3,14 +3,14 @@ import org.scalatest.matchers.ShouldMatchers
 
 class Problem7Spec extends FlatSpec with ShouldMatchers {
   "problem 7 IsPrime" should "return true for 23" in {
-  	val problem = Problem7
-  	val result = problem.isPrime(23)
+    val problem = Problem7
+    val result = PrimeHelper.isPrime(23)
     result should be === true
   }
 
   "problem 7 IsPrime" should "return false for 121" in {
     val problem = Problem7
-    val result = problem.isPrime(121)
+    val result = PrimeHelper.isPrime(121)
     result should be === false
   }
 
