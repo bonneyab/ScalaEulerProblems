@@ -553,3 +553,36 @@ object Problem27 {
     countPrimes(0, 0)
   }
 }
+
+// Problem 31
+// In England the currency is made up of pound, £, and pence, p, and there are eight coins in general circulation:
+// 1p, 2p, 5p, 10p, 20p, 50p, £1 (100p) and £2 (200p).
+// It is possible to make £2 in the following way:
+// 1×£1 + 1×50p + 2×20p + 1×5p + 1×2p + 3×1p
+// How many different ways can £2 be made using any number of coins?
+//TODO: This took quite a few iterations and was a headache, I should remind myself how this works on occasion
+object Problem31{
+  def GetTotalCombintationsForNumber(increments : Array[Int], total: Int) : Int = {
+    //Todo redo with val and build out the array?
+    var calculatedValues = new Array[Int](total + 1)
+    calculatedValues(0) = 1
+    @tailrec def calculateCombinations(incrementIndex : Int, valueToCalculate : Int) : Array[Int] = {
+      calculatedValues(valueToCalculate) = calculatedValues(valueToCalculate) + calculatedValues(valueToCalculate - increments(incrementIndex))
+      //This duplicate if statement stuff because of the tailrec.
+      val theEnd = valueToCalculate >= total
+      if(incrementIndex == increments.length - 1 && theEnd){
+        println("Return time!")
+        return calculatedValues;
+      }
+      if(theEnd){
+        calculateCombinations(incrementIndex + 1, increments(incrementIndex + 1))
+      }
+      else{
+        calculateCombinations(incrementIndex, valueToCalculate + 1)
+      }
+    }
+
+    calculateCombinations(0, increments(0))
+    return calculatedValues(total)
+  }
+}
