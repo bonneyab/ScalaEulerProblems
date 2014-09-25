@@ -590,9 +590,7 @@ object Problem31{
   // Circular primes
   // Problem 35
   // The number, 197, is called a circular prime because all rotations of the digits: 197, 971, and 719, are themselves prime.
-
   // There are thirteen such primes below 100: 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
-
   // How many circular primes are there below one million?
   object Problem35 {
     def GetCircularPrimeCountBelowNumber(number: Int) : Int = {
@@ -603,12 +601,9 @@ object Problem31{
 
     def isCircularPrime(number : Int) : Boolean = {
       val stringNumber = number.toString
-      //doh, evidenly it really meant rotations, not all permutations, change this eventually?
+      //doh, evidently it really meant rotations, not all permutations, change this eventually?
       val combinations = stringNumber.permutations
-     //  println("start: " + number)
-     // combinations.foreach(println)
-     //  println("End: " + number)
-     //probably go faster by turning the perviously calculated primes into a hashtable.
+     //probably go faster by turning the previously calculated primes into a hashtable.
       return combinations.forall(c => PrimeHelper.isPrime(c.toInt))
     }
   }
